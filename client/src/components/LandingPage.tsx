@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 const LandingPage = () => {
   return (
     <div className="pt-16">
-      <div className="relative bg-white overflow-hidden">
+      <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+          <div className="relative z-10 pb-8 bg-white/90 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32 backdrop-blur-sm rounded-lg shadow-lg">
             <svg
               className="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2"
               fill="currentColor"
@@ -52,13 +52,16 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <div className="h-56 w-full bg-gradient-to-r from-blue-500 to-indigo-600 sm:h-72 md:h-96 lg:w-full lg:h-full">
-            <svg className="w-full h-full text-white opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="currentColor" strokeWidth="2"></path>
-              <path d="M0,0 L100,100 M100,0 L0,100" stroke="currentColor" strokeWidth="1"></path>
-              <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="1"></circle>
-              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="1"></circle>
-            </svg>
+          <div className="h-56 w-full bg-[#000018] sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/80 via-blue-400/50 to-cyan-400/70 mix-blend-overlay"></div>
+            <div 
+              className="h-full w-full bg-cover bg-center opacity-90"
+              style={{
+                backgroundImage: "url('/physics-grid-wireframe.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
+            ></div>
           </div>
         </div>
       </div>
