@@ -38,11 +38,12 @@ const PathCard = ({ path, index }: { path: any, index: number }) => {
           ))}
         </div>
         <div className="mt-6">
-          <Link href={`/learn/${path.id}`}>
-            <a className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${path.btnBg} hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${path.id === 'engineering' ? 'primary' : path.id === 'healthcare' ? 'teal-500' : 'amber-500'}`}>
-              Start Learning
-            </a>
-          </Link>
+          <div 
+            onClick={() => window.location.href = `/learn/${path.id}`}
+            className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${path.btnBg} hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${path.id === 'engineering' ? 'primary' : path.id === 'healthcare' ? 'teal-500' : 'amber-500'} cursor-pointer`}
+          >
+            Start Learning
+          </div>
         </div>
       </div>
     </motion.div>
