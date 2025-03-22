@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import { motion } from "framer-motion";
 
 const LandingPage = () => {
@@ -33,18 +32,20 @@ const LandingPage = () => {
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div className="rounded-md shadow">
-                    <Link href="/paths">
-                      <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-opacity-90 md:py-4 md:text-lg md:px-10">
-                        Get Started
-                      </a>
-                    </Link>
+                    <div
+                      onClick={() => window.location.href = "/paths"}
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-opacity-90 md:py-4 md:text-lg md:px-10 cursor-pointer"
+                    >
+                      Get Started
+                    </div>
                   </div>
                   <div className="mt-3 sm:mt-0 sm:ml-3">
-                    <Link href="/about">
-                      <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-neutral-100 hover:bg-neutral-200 md:py-4 md:text-lg md:px-10">
-                        Learn More
-                      </a>
-                    </Link>
+                    <div
+                      onClick={() => window.location.href = "/about"}
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-neutral-100 hover:bg-neutral-200 md:py-4 md:text-lg md:px-10 cursor-pointer"
+                    >
+                      Learn More
+                    </div>
                   </div>
                 </div>
               </div>
@@ -53,11 +54,12 @@ const LandingPage = () => {
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
           <div className="h-56 w-full bg-[#000018] sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-blue-400/20 to-cyan-400/30 mix-blend-overlay z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-blue-400/20 to-cyan-400/30 mix-blend-color z-10"></div>
             <img 
               src="/physics-grid-wireframe.jpg"
               alt="Physics grid wireframe"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center brightness-125 contrast-125"
+              style={{ opacity: 1 }}
             />
           </div>
         </div>
