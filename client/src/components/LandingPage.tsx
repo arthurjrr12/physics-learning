@@ -53,22 +53,27 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <div className="h-56 w-full bg-transparent sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-blue-400/10 to-cyan-400/20 mix-blend-lighten z-10"></div>
+          <div className="h-56 w-full sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden relative">
             <div className="w-full h-full flex items-center justify-center" 
                  style={{
-                   background: "linear-gradient(135deg, #2B0B98 0%, #42007C 50%, #330066 100%)"
+                   background: "linear-gradient(135deg, #8A4FFF 0%, #5F26D9 50%, #4A0AAD 100%)"
                  }}>
-              <img 
-                src="/physics-grid-wireframe.jpg"
-                alt="Physics grid wireframe"
-                className="w-full h-full object-cover object-center"
-                style={{ 
-                  opacity: 0.95,
-                  maxWidth: "100%",
-                  maxHeight: "100%"
-                }}
-              />
+              <div className="absolute inset-0">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full opacity-20">
+                  <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
+                    </pattern>
+                  </defs>
+                  <rect width="100" height="100" fill="url(#grid)" />
+                </svg>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-64 h-64 text-white opacity-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0M20 12h-8M12 4v16" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
