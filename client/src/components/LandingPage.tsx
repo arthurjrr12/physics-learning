@@ -52,16 +52,13 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <div className="h-56 w-full bg-[#000018] sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/80 via-blue-400/50 to-cyan-400/70 mix-blend-overlay"></div>
-            <div 
-              className="h-full w-full bg-cover bg-center opacity-90"
-              style={{
-                backgroundImage: "url('/physics-grid-wireframe.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center"
-              }}
-            ></div>
+          <div className="h-56 w-full bg-[#000018] sm:h-72 md:h-96 lg:w-full lg:h-full overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-blue-400/20 to-cyan-400/30 mix-blend-overlay z-10"></div>
+            <img 
+              src="/physics-grid-wireframe.jpg"
+              alt="Physics grid wireframe"
+              className="w-full h-full object-cover object-center"
+            />
           </div>
         </div>
       </div>
