@@ -4,7 +4,20 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/lib/userContext";
 import { paths, modules, quizzes } from "@/lib/mockData";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import QuizOption from "./QuizOption";
+import { 
+  Search, 
+  BookOpen, 
+  Award, 
+  Trophy, 
+  Star, 
+  BookmarkCheck, 
+  CheckCircle2, 
+  Zap, 
+  Medal 
+} from "lucide-react";
 
 const LearningModulePage = ({ pathId }: { pathId: string }) => {
   const { toast } = useToast();
@@ -15,16 +28,21 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [lives, setLives] = useState(3);
   const [xp, setXp] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+  const [pathQuizzes, setPathQuizzes] = useState<any[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState([true, true, false, true, false, false]);
   
   // Find the current path data
   useEffect(() => {
     const path = paths.find(p => p.id === pathId);
     if (path) {
       setCurrentPath(path);
-      // Get the first quiz for this path
-      const pathQuizzes = quizzes.filter(q => q.pathId === pathId);
-      if (pathQuizzes.length > 0) {
-        setCurrentQuiz(pathQuizzes[0]);
+      // Get quizzes for this path
+      const filteredQuizzes = quizzes.filter(q => q.pathId === pathId);
+      setPathQuizzes(filteredQuizzes);
+      if (filteredQuizzes.length > 0) {
+        setCurrentQuiz(filteredQuizzes[0]);
       }
     }
   }, [pathId]);
@@ -46,7 +64,22 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
         variant: "default",
       });
       setXp(prev => prev + 10);
-      updateProgress(pathId, 10);
+      updateProgress(pathId, 5);
+      
+      // Unlock achievement if streak of correct answers (simulated)
+      if (xp >= 20 && !unlockedAchievements[2]) {
+        setUnlockedAchievements(prev => {
+          const updated = [...prev];
+          updated[2] = true;
+          return updated;
+        });
+        
+        toast({
+          title: "Achievement Unlocked!",
+          description: "Perfect Knowledge! You got 3 questions correct in a row.",
+          variant: "default",
+        });
+      }
     } else {
       toast({
         title: "Incorrect",
@@ -60,20 +93,30 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
   };
 
   const nextQuestion = () => {
-    // In a real app, we would load the next question
-    // For the prototype, we'll just reset the current question
     setSelectedOption(null);
     setIsAnswerChecked(false);
     
-    // Simulate moving to next question
+    // Move to the next question if available
+    const nextIndex = (currentQuizIndex + 1) % pathQuizzes.length;
+    setCurrentQuizIndex(nextIndex);
+    setCurrentQuiz(pathQuizzes[nextIndex]);
+    
     toast({
       title: "Moving to next question",
       description: "Loading the next challenge...",
     });
-    
-    // For demo purposes, we'll just keep the same quiz
-    // In a real app, we would fetch the next quiz
   };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredModules = modules
+    .filter(m => m.pathId === pathId)
+    .filter(m => 
+      m.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      m.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   if (!currentPath || !currentQuiz) {
     return (
@@ -90,6 +133,46 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
   const currentModule = modules.find(m => m.pathId === pathId && m.order === 3);
   const totalModules = modules.filter(m => m.pathId === pathId).length;
   const completedModules = 2; // For demo purposes
+  
+  // Define achievements
+  const achievements = [
+    { 
+      name: "3-Day Streak", 
+      description: "Login for 3 consecutive days", 
+      icon: <Zap className="h-5 w-5" />, 
+      color: "amber" 
+    },
+    { 
+      name: "Quiz Master", 
+      description: "Complete 25 quiz questions", 
+      icon: <BookOpen className="h-5 w-5" />, 
+      color: "blue" 
+    },
+    { 
+      name: "Perfect Knowledge", 
+      description: "Get 3 questions correct in a row", 
+      icon: <Star className="h-5 w-5" />, 
+      color: "green" 
+    },
+    { 
+      name: "Module Complete", 
+      description: "Finish your first learning module", 
+      icon: <CheckCircle2 className="h-5 w-5" />, 
+      color: "purple" 
+    },
+    { 
+      name: "Physics Champion", 
+      description: "Reach 500 XP on the platform", 
+      icon: <Trophy className="h-5 w-5" />, 
+      color: "orange" 
+    },
+    { 
+      name: "Early Adopter", 
+      description: "Join the platform in the first month", 
+      icon: <Award className="h-5 w-5" />, 
+      color: "pink" 
+    }
+  ];
   
   return (
     <div className="pt-16">
@@ -131,10 +214,26 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
         <div className="flex flex-col lg:flex-row">
           {/* Sidebar Progress Tracker */}
           <div className="lg:w-1/4 mb-8 lg:mb-0 lg:pr-6">
+            {/* Search Module Area */}
+            <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-neutral-400" />
+                </div>
+                <Input 
+                  type="search" 
+                  placeholder="Search modules..." 
+                  className="pl-10 focus:border-primary" 
+                  value={searchQuery}
+                  onChange={handleSearch}
+                />
+              </div>
+            </div>
+
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-lg font-semibold text-neutral-900 mb-4">Module Progress</h3>
               <div className="space-y-6">
-                {modules.filter(m => m.pathId === pathId).map((module) => {
+                {filteredModules.map((module) => {
                   const isCompleted = module.order <= completedModules;
                   const isCurrent = module.order === 3;
                   
@@ -183,26 +282,45 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
             </div>
 
             <div className="bg-white rounded-xl shadow-md p-6 mt-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Your Achievements</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
-                    <i className="ri-fire-line text-xl"></i>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-neutral-900">Your Achievements</h3>
+                <Badge variant="outline" className="bg-primary/10 hover:bg-primary/20 text-primary border-none">
+                  {unlockedAchievements.filter(Boolean).length}/{achievements.length}
+                </Badge>
+              </div>
+
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <div 
+                    key={index} 
+                    className={`flex items-center p-3 rounded-lg transition-all ${
+                      unlockedAchievements[index] 
+                        ? `bg-${achievement.color}-50 hover:bg-${achievement.color}-100` 
+                        : 'bg-neutral-100 text-neutral-400'
+                    }`}
+                  >
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                      unlockedAchievements[index] 
+                        ? `bg-${achievement.color}-100 text-${achievement.color}-600` 
+                        : 'bg-neutral-200 text-neutral-400'
+                    }`}>
+                      {achievement.icon}
+                    </div>
+                    <div className="ml-3">
+                      <p className={`text-sm font-medium ${unlockedAchievements[index] ? 'text-neutral-900' : 'text-neutral-400'}`}>
+                        {achievement.name}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {achievement.description}
+                      </p>
+                    </div>
+                    {unlockedAchievements[index] && (
+                      <div className="ml-auto">
+                        <BookmarkCheck className="h-5 w-5 text-green-500" />
+                      </div>
+                    )}
                   </div>
-                  <span className="text-xs text-neutral-600 mt-2">3-day streak</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                    <i className="ri-question-answer-line text-xl"></i>
-                  </div>
-                  <span className="text-xs text-neutral-600 mt-2">25 quizzes</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400">
-                    <i className="ri-award-line text-xl"></i>
-                  </div>
-                  <span className="text-xs text-neutral-400 mt-2">Perfect score</span>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -218,6 +336,7 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
               <div className="max-w-2xl mx-auto">
                 {/* Question Card */}
                 <motion.div 
+                  key={currentQuiz.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
@@ -282,7 +401,7 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
 
                 {/* Progress Bar */}
                 <div className="mt-6 bg-white rounded-lg p-4">
-                  <Progress value={60} className="w-full" />
+                  <Progress value={(currentQuiz.order / 5) * 100} className="w-full" />
                   <div className="flex justify-between mt-2 text-sm text-neutral-600">
                     <span>{currentQuiz.order}/5 questions</span>
                     <span>{5 - currentQuiz.order} remaining</span>
