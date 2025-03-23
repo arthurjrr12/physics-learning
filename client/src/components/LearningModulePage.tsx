@@ -15,6 +15,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import QuizOption from "./QuizOption";
 import { 
   Search, 
@@ -28,7 +42,15 @@ import {
   Medal, 
   PartyPopper,
   AlertTriangle,
-  BookX
+  BookX,
+  Beaker,
+  Lightbulb,
+  Timer,
+  ListChecks,
+  ShoppingCart,
+  Clipboard,
+  GraduationCap,
+  FlaskConical
 } from "lucide-react";
 
 const LearningModulePage = ({ pathId }: { pathId: string }) => {
@@ -368,89 +390,216 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
             </div>
           </div>
 
-          {/* Main Content - Quiz Area */}
+          {/* Main Content Area with Tabs */}
           <div className="lg:w-3/4">
             <div className="bg-white rounded-xl shadow-md p-6">
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-neutral-900">{currentModule?.title} Quiz</h2>
-                <p className="text-neutral-600 mt-2">{currentQuiz.description}</p>
+                <h2 className="text-2xl font-bold text-neutral-900">{currentModule?.title}</h2>
+                <p className="text-neutral-600 mt-2">Master key concepts through interactive learning and hands-on activities</p>
               </div>
 
-              <div className="max-w-2xl mx-auto">
-                {/* Question Card */}
-                <motion.div 
-                  key={currentQuiz.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="bg-neutral-50 rounded-xl p-6"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-medium text-neutral-600">Question {currentQuiz.order} of 5</span>
-                    <div className="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                      <i className="ri-heart-line mr-1"></i>
-                      <span>{lives} lives left</span>
-                    </div>
-                  </div>
+              <Tabs defaultValue="quiz" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-8">
+                  <TabsTrigger value="quiz" className="text-base">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Quiz Challenge
+                  </TabsTrigger>
+                  <TabsTrigger value="stem" className="text-base">
+                    <Beaker className="mr-2 h-4 w-4" />
+                    STEM Activities
+                  </TabsTrigger>
+                </TabsList>
+                
+                {/* Quiz Tab Content */}
+                <TabsContent value="quiz" className="mt-0">
+                  <div className="max-w-2xl mx-auto">
+                    {/* Question Card */}
+                    <motion.div 
+                      key={currentQuiz.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6 }}
+                      className="bg-neutral-50 rounded-xl p-6"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-medium text-neutral-600">Question {currentQuiz.order} of 5</span>
+                        <div className="bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                          <i className="ri-heart-line mr-1"></i>
+                          <span>{lives} lives left</span>
+                        </div>
+                      </div>
 
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium text-neutral-900">{currentQuiz.question}</h3>
-                  </div>
+                      <div className="mb-6">
+                        <h3 className="text-lg font-medium text-neutral-900">{currentQuiz.question}</h3>
+                      </div>
 
-                  {/* Multiple Choice Options */}
-                  <div className="space-y-3">
-                    {currentQuiz.options.map((option: any) => (
-                      <QuizOption 
-                        key={option.id}
-                        option={option}
-                        selectedOption={selectedOption}
-                        correctOption={currentQuiz.correctOption}
-                        isAnswerChecked={isAnswerChecked}
-                        onSelect={() => handleOptionSelect(option.id)}
-                      />
-                    ))}
-                  </div>
+                      {/* Multiple Choice Options */}
+                      <div className="space-y-3">
+                        {currentQuiz.options.map((option: any) => (
+                          <QuizOption 
+                            key={option.id}
+                            option={option}
+                            selectedOption={selectedOption}
+                            correctOption={currentQuiz.correctOption}
+                            isAnswerChecked={isAnswerChecked}
+                            onSelect={() => handleOptionSelect(option.id)}
+                          />
+                        ))}
+                      </div>
 
-                  {/* Check Answer Button */}
-                  {selectedOption && !isAnswerChecked && (
-                    <div className="mt-6">
-                      <button 
-                        className="w-full bg-primary text-white font-medium py-3 rounded-lg shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                        onClick={checkAnswer}
-                      >
-                        Check Answer
-                      </button>
-                    </div>
-                  )}
+                      {/* Check Answer Button */}
+                      {selectedOption && !isAnswerChecked && (
+                        <div className="mt-6">
+                          <button 
+                            className="w-full bg-primary text-white font-medium py-3 rounded-lg shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                            onClick={checkAnswer}
+                          >
+                            Check Answer
+                          </button>
+                        </div>
+                      )}
 
-                  {/* Explanation (Hidden initially) */}
-                  {isAnswerChecked && (
-                    <div className="mt-6 bg-neutral-100 rounded-lg p-4">
-                      <h4 className="font-medium text-neutral-900">Explanation</h4>
-                      <p className="text-neutral-700 mt-1">
-                        {currentQuiz.explanation}
-                      </p>
-                      <div className="mt-4">
-                        <button 
-                          className="w-full bg-primary text-white font-medium py-3 rounded-lg shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                          onClick={nextQuestion}
-                        >
-                          Continue
-                        </button>
+                      {/* Explanation (Hidden initially) */}
+                      {isAnswerChecked && (
+                        <div className="mt-6 bg-neutral-100 rounded-lg p-4">
+                          <h4 className="font-medium text-neutral-900">Explanation</h4>
+                          <p className="text-neutral-700 mt-1">
+                            {currentQuiz.explanation}
+                          </p>
+                          <div className="mt-4">
+                            <button 
+                              className="w-full bg-primary text-white font-medium py-3 rounded-lg shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                              onClick={nextQuestion}
+                            >
+                              Continue
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+
+                    {/* Progress Bar */}
+                    <div className="mt-6 bg-white rounded-lg p-4">
+                      <Progress value={(currentQuiz.order / 5) * 100} className="w-full" />
+                      <div className="flex justify-between mt-2 text-sm text-neutral-600">
+                        <span>{currentQuiz.order}/5 questions</span>
+                        <span>{5 - currentQuiz.order} remaining</span>
                       </div>
                     </div>
-                  )}
-                </motion.div>
-
-                {/* Progress Bar */}
-                <div className="mt-6 bg-white rounded-lg p-4">
-                  <Progress value={(currentQuiz.order / 5) * 100} className="w-full" />
-                  <div className="flex justify-between mt-2 text-sm text-neutral-600">
-                    <span>{currentQuiz.order}/5 questions</span>
-                    <span>{5 - currentQuiz.order} remaining</span>
                   </div>
-                </div>
-              </div>
+                </TabsContent>
+                
+                {/* STEM Activities Tab Content */}
+                <TabsContent value="stem" className="mt-0">
+                  <div className="space-y-8">
+                    <div className="text-center">
+                      <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-800 mb-4">
+                        <FlaskConical className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Hands-on Learning</span>
+                      </div>
+                      <h3 className="text-xl font-bold">Apply physics concepts through these STEM activities</h3>
+                    </div>
+                    
+                    {currentModule?.stemActivities && currentModule.stemActivities.length > 0 ? (
+                      <div className="space-y-6">
+                        {currentModule.stemActivities.map((activity) => (
+                          <Card key={activity.id} className="overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 pb-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <CardTitle className="text-lg flex items-center">
+                                    <Lightbulb className="h-5 w-5 mr-2 text-amber-500" />
+                                    {activity.title}
+                                  </CardTitle>
+                                  <CardDescription className="mt-1">
+                                    {activity.description}
+                                  </CardDescription>
+                                </div>
+                                <Badge variant="outline" className={
+                                  activity.difficultyLevel === "beginner" ? "bg-green-100 text-green-800 border-green-200" :
+                                  activity.difficultyLevel === "intermediate" ? "bg-blue-100 text-blue-800 border-blue-200" :
+                                  "bg-purple-100 text-purple-800 border-purple-200"
+                                }>
+                                  {activity.difficultyLevel.charAt(0).toUpperCase() + activity.difficultyLevel.slice(1)}
+                                </Badge>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                              <div className="space-y-4">
+                                <div>
+                                  <div className="flex items-center font-medium text-sm text-neutral-700 mb-2">
+                                    <Timer className="h-4 w-4 mr-2 text-neutral-500" />
+                                    Estimated time: {activity.estimatedTime}
+                                  </div>
+                                  
+                                  <div className="bg-neutral-50 rounded-lg p-4 mb-4">
+                                    <div className="font-medium flex items-center mb-2 text-neutral-800">
+                                      <ShoppingCart className="h-4 w-4 mr-2 text-neutral-600" />
+                                      Materials needed:
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      {activity.materials.map((material, index) => (
+                                        <Badge key={index} variant="outline" className="bg-white">
+                                          {material}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="mb-4">
+                                    <div className="font-medium flex items-center mb-2 text-neutral-800">
+                                      <ListChecks className="h-4 w-4 mr-2 text-neutral-600" />
+                                      Activity steps:
+                                    </div>
+                                    <ol className="list-decimal pl-5 space-y-1">
+                                      {activity.steps.map((step, index) => (
+                                        <li key={index} className="text-sm text-neutral-700">{step}</li>
+                                      ))}
+                                    </ol>
+                                  </div>
+                                  
+                                  <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                                    <div className="font-medium flex items-center mb-2 text-blue-800">
+                                      <Clipboard className="h-4 w-4 mr-2" />
+                                      Expected outcome:
+                                    </div>
+                                    <p className="text-sm text-blue-700">{activity.expectedOutcome}</p>
+                                  </div>
+                                  
+                                  <div className="bg-purple-50 rounded-lg p-4">
+                                    <div className="font-medium flex items-center mb-2 text-purple-800">
+                                      <GraduationCap className="h-4 w-4 mr-2" />
+                                      Science connection:
+                                    </div>
+                                    <p className="text-sm text-purple-700">{activity.scienceConnection}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                            <CardFooter className="bg-neutral-50 border-t px-6 py-3">
+                              <Button className="w-full bg-primary hover:bg-primary/90">
+                                <Beaker className="h-4 w-4 mr-2" />
+                                Start Activity
+                              </Button>
+                            </CardFooter>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className="rounded-full bg-neutral-100 p-4 mb-4">
+                          <FlaskConical className="h-8 w-8 text-neutral-400" />
+                        </div>
+                        <h3 className="text-xl font-medium text-neutral-700 mb-2">No activities available yet</h3>
+                        <p className="text-neutral-500 max-w-md">
+                          We're currently developing hands-on activities for this module. 
+                          Please check back soon!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>

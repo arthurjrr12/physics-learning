@@ -18,6 +18,19 @@ export interface Path {
   tagText: string;
 }
 
+export interface StemActivity {
+  id: string;
+  title: string;
+  description: string;
+  materials: string[];
+  steps: string[];
+  expectedOutcome: string;
+  scienceConnection: string;
+  difficultyLevel: "beginner" | "intermediate" | "advanced";
+  estimatedTime: string;
+  imageUrl?: string;
+}
+
 export interface Module {
   id: string;
   pathId: string;
@@ -25,6 +38,9 @@ export interface Module {
   description: string;
   order: number;
   content: string;
+  learningObjectives: string[];
+  keyTerms: string[];
+  stemActivities: StemActivity[];
 }
 
 export interface QuizOption {
