@@ -8,7 +8,13 @@ const __dirname = dirname(__filename);
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+export default defineConfig({
+  root: 'client', // Ituro sa 'client' folder
+  plugins: [react()],
+})
 const viteLogger = createLogger();
 
 export function log(message: string, source = "express") {
