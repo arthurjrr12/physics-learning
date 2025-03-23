@@ -6,6 +6,15 @@ import { useUser } from "@/lib/userContext";
 import { paths, modules, quizzes } from "@/lib/mockData";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import QuizOption from "./QuizOption";
 import { 
   Search, 
@@ -16,7 +25,10 @@ import {
   BookmarkCheck, 
   CheckCircle2, 
   Zap, 
-  Medal 
+  Medal, 
+  PartyPopper,
+  AlertTriangle,
+  BookX
 } from "lucide-react";
 
 const LearningModulePage = ({ pathId }: { pathId: string }) => {
@@ -32,6 +44,8 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [pathQuizzes, setPathQuizzes] = useState<any[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = useState([true, true, false, true, false, false]);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [completionPassed, setCompletionPassed] = useState(false);
   
   // Find the current path data
   useEffect(() => {
@@ -96,15 +110,44 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
     setSelectedOption(null);
     setIsAnswerChecked(false);
     
-    // Move to the next question if available
-    const nextIndex = (currentQuizIndex + 1) % pathQuizzes.length;
-    setCurrentQuizIndex(nextIndex);
-    setCurrentQuiz(pathQuizzes[nextIndex]);
-    
-    toast({
-      title: "Moving to next question",
-      description: "Loading the next challenge...",
-    });
+    // Check if this was the last question in the module
+    if (currentQuizIndex === pathQuizzes.length - 1) {
+      // Calculate score based on remaining lives
+      const moduleScore = Math.round((lives / 3) * 100);
+      const passThreshold = 70;
+      
+      // Update achievements if module is completed
+      if (!unlockedAchievements[3]) {
+        setUnlockedAchievements(prev => {
+          const updated = [...prev];
+          updated[3] = true;
+          return updated;
+        });
+      }
+      
+      // Determine if the user passed the module
+      setCompletionPassed(moduleScore >= passThreshold);
+      
+      // Show completion dialog
+      setShowCompletionDialog(true);
+      
+      // For demo purposes, we're cycling back to the first question
+      setCurrentQuizIndex(0);
+      setCurrentQuiz(pathQuizzes[0]);
+      
+      // Reset lives for the next attempt
+      setLives(3);
+    } else {
+      // Move to the next question
+      const nextIndex = currentQuizIndex + 1;
+      setCurrentQuizIndex(nextIndex);
+      setCurrentQuiz(pathQuizzes[nextIndex]);
+      
+      toast({
+        title: "Moving to next question",
+        description: "Loading the next challenge...",
+      });
+    }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -412,6 +455,110 @@ const LearningModulePage = ({ pathId }: { pathId: string }) => {
           </div>
         </div>
       </div>
+
+      {/* Module Completion Dialog */}
+      <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">
+              {completionPassed ? (
+                <div className="flex items-center justify-center gap-2 text-[#28C76F]">
+                  <PartyPopper className="h-6 w-6" />
+                  <span>Congratulations!</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2 text-amber-500">
+                  <AlertTriangle className="h-6 w-6" />
+                  <span>Module Review Required</span>
+                </div>
+              )}
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              {completionPassed ? (
+                <span>You've successfully completed the {currentModule?.title} module!</span>
+              ) : (
+                <span>You'll need to review the material and try again.</span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="p-5">
+            <div className="mb-6 flex justify-center">
+              {completionPassed ? (
+                <div className="flex items-center justify-center w-24 h-24 rounded-full bg-[#28C76F]/10 text-[#28C76F]">
+                  <Medal className="h-12 w-12" />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 text-amber-500">
+                  <BookX className="h-12 w-12" />
+                </div>
+              )}
+            </div>
+            
+            <div className="text-center">
+              <h3 className="font-medium text-lg mb-2">
+                {completionPassed ? "Great work!" : "Don't worry!"}
+              </h3>
+              <p className="text-neutral-600 mb-4">
+                {completionPassed 
+                  ? "You've mastered the key concepts in this module. Keep up the great work!" 
+                  : "Learning takes time. Review the material, take notes, and try the quiz again."}
+              </p>
+              <div className="bg-neutral-100 p-3 rounded-lg mb-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-700">Score:</span>
+                  <span className={`font-bold ${completionPassed ? 'text-[#28C76F]' : 'text-amber-500'}`}>
+                    {Math.round((lives / 3) * 100)}%
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-700">Status:</span>
+                  <span className={`font-bold ${completionPassed ? 'text-[#28C76F]' : 'text-amber-500'}`}>
+                    {completionPassed ? "PASSED" : "REVIEW NEEDED"}
+                  </span>
+                </div>
+                {completionPassed && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-neutral-700">XP Earned:</span>
+                    <span className="font-bold text-primary">+50 XP</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="sm:justify-center">
+            <Button 
+              type="button" 
+              onClick={() => {
+                setShowCompletionDialog(false);
+                if (completionPassed) {
+                  // If passed, update XP
+                  setXp(prev => prev + 50);
+                  
+                  // Update progress to 100% for this module
+                  updateProgress(pathId, 100 - (userProgress[pathId] || 0));
+                  
+                  toast({
+                    title: "Module Completed!",
+                    description: "You've earned 50 XP and unlocked the next module.",
+                    variant: "default",
+                  });
+                } else {
+                  toast({
+                    title: "Keep practicing",
+                    description: "You can retry this module to improve your score.",
+                    variant: "default",
+                  });
+                }
+              }} 
+              className={`w-full ${completionPassed ? 'bg-[#28C76F] hover:bg-[#28C76F]/90' : 'bg-primary'}`}
+            >
+              {completionPassed ? "Continue to Next Module" : "Review Module"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
