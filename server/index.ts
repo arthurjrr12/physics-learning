@@ -12,7 +12,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
-  res.json = function (bodyJson: any, ...args: any[]) {
+  res.json = function (bodyJson: any) {
     capturedJsonResponse = bodyJson;
     return originalResJson.call(res, bodyJson);
   };
@@ -59,7 +59,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 4000;
+  const port = 5000;
   server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
