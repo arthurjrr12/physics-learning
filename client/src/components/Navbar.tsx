@@ -14,7 +14,10 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
-    { name: "Courses", path: "/paths" },
+    { name: "Career Paths", path: "/paths" }, // Changed from "Courses" to "Career Paths"
+    { name: "Physics Learning", path: "/physics-learning" }, // New button
+    { name: "Resources", path: "/resources" }, // New button
+    { name: "STEM Publications", path: "/stem-publications" }, // New button
   ];
 
   return (
